@@ -12,7 +12,11 @@ import Inputbox from '../../component/layout/utilities/Inputbox';
 import { NavLink } from 'react-router-dom';
 import loginbg from '../../assets/Rectangle 69.webp'
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import Validation from '../../validation/Validation';
+import Heading from '../../component/heading/Heading';
+import Modal from '@mui/material/Modal';
+import { IoMdClose } from "react-icons/io";
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -43,29 +47,41 @@ const BootstrapButton = styled(Button)({
   marginBottom: '30px'
 });
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 500,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const Login = () => {
-   
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  
   let initialValues = {
     email: '',
     password: ''
   }
+
   const formik = useFormik({
     initialValues: initialValues,
-    validationSchema: Yup.object({
-      password: Yup.string()
-        .max(10, 'Must be 10 characters or less')
-        .min(5 , 'must be 5 characters')
-        .required('Please Enter Your Password'),
-      email: Yup.string()
-      .email('Invalid email address')
-      .required('Please Enter Your Email'),
-    }),
-    onSubmit: values => {
+    validationSchema: Validation,
+    onSubmit: (values , actions) => {
        console.log(values);
-      // alert(JSON.stringify(values, null, 2));
+       actions.resetForm();
     },
   });
+
+  let handlecross = () =>{
+
+  }
 
   return (
     <>
@@ -80,9 +96,11 @@ const Login = () => {
                   <Image source={googleimg} alt="Not Found" styledimg="googleimg"/>
                 <form onSubmit={formik.handleSubmit}>
                   <div className='login_main'>
+                    <div>
                       <Inputbox 
                        type="email" 
                        id="email"
+                       name="email"
                        variant="standard" 
                        placeholder="Email Address"
                        onChange={formik.handleChange}
@@ -91,9 +109,13 @@ const Login = () => {
                           {formik.touched.email && formik.errors.email ? (
                             <div className='fromikerror'>{formik.errors.email}</div>
                           ) : null}
+                    </div>
+                    <div>
+
                       <Inputbox 
                        type='password'
                        id='password'
+                       name="password"
                        variant="standard"
                        placeholder="Enter Password"
                        onChange={formik.handleChange}
@@ -103,12 +125,14 @@ const Login = () => {
                       {formik.touched.password && formik.errors.password ? (
                             <div className='fromikerror'>{formik.errors.password}</div>
                       ) : null}
+                    </div>
 
 
                       <BootstrapButton type='submit' variant="contained" disableRipple>
                         Login to Continue
                       </BootstrapButton>
                       
+                    <a className='modal' onClick={handleOpen}>Forgot Password??</a>
                   </div>
                 </form>
 
@@ -125,7 +149,33 @@ const Login = () => {
             </Grid>
           </Grid>
       </Box>      
-      
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          
+           <h1 style={{textAlign: 'center' , marginBottom: '20px'}}>Forgot Your Password</h1>
+
+          <Inputbox 
+          type="password" 
+          id="forgotpassword"
+          name="forgotpassword"
+          variant="outlined" 
+          placeholder="Enter Your New Password" 
+          className='forgotinput'/>
+          <div style={{marginTop: '30px' , textAlign: 'center'}}>
+            <BootstrapButton type='submit' variant="contained" disableRipple>
+              Reset Password
+            </BootstrapButton>
+          </div>
+          <IoMdClose onClick={()=>setOpen(false)} className='close'/>
+        </Box>
+      </Modal>
+
     </>
   )
 }
