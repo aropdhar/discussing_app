@@ -1,8 +1,10 @@
 .login_main{
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
-    row-gap: 30px;
+    row-gap: 60px;
 }
+
 
 .googleimg{
     width: 220px;
@@ -15,6 +17,10 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.fromikerror{
+    margin-top: -40px;
 }
 
 /* register section */
