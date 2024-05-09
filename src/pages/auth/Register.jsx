@@ -9,6 +9,8 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Typography
 import Inputbox from '../../component/layout/utilities/Inputbox';
 import Button from '@mui/material/Button';
 import { NavLink } from 'react-router-dom';
+import { useFormik } from 'formik';
+import registervalidate from '../../registervalidation/Regvalidation';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -34,8 +36,8 @@ const Registrationsubhead = styled(Typography)({
   lineHeight: "28.15px",
   fontFamily: "normal",
   color: "#11175D",
-  opacity: "0.5"
-  
+  opacity: "0.5",
+  margin: '30px 0 30px 0'
 });
 
 const BootstrapButton = styled(Button)({
@@ -47,45 +49,111 @@ const BootstrapButton = styled(Button)({
   lineHeight: 1.5,
   backgroundColor: '#5F35F5',
   borderColor: '#0063cc',
-  borderRadius: '86px'
+  borderRadius: '86px',
+  marginBottom: '30px'
 });
 
 
 const Register = () => {
+  
+  const initialValues = {
+
+    signemail: '',
+    signfullname: '',
+    signpassword: '',
+    
+  }
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: registervalidate,
+    
+    onSubmit: (values , actions) => {
+      console.log(values);
+      actions.resetForm();
+    },
+  });
+
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display: 'flex' , alignItems:'center' , justifyContent: 'center'}}>
-            <div className='register_main'>
+            <div>
                 <Registrationhead variant="h1">
                     Get started with easily register 
                 </Registrationhead>
                 <Registrationsubhead variant="h4">
                     Free register and you can enjoy it
                 </Registrationsubhead>
-                <Inputbox  variant="outlined" placeholder="Email Address"/>
-                <Inputbox  variant="outlined" placeholder="Full Name"/>
-                <Inputbox  variant="outlined" placeholder="Email Address"/>
+              <form onSubmit={formik.handleSubmit}>
+                <div className='register_main'>
+                  <div>
+                    <Inputbox 
+                    id="signemail"
+                    name="signemail"
+                    type="email" 
+                    variant="outlined" 
+                    placeholder="Email Address"
+                    onChange={formik.handleChange}
+                    value={formik.values.signemail}
+                    />
+                     {formik.touched.signemail && formik.errors.signemail ? (
+                        <div>{formik.errors.signemail}</div>
+                      ) : null}
+                  </div>
+                  
+                  <div>
+                    <Inputbox 
+                      type="text" 
+                      id="signfullname"
+                      name="signfullname"
+                      variant="outlined" 
+                      placeholder="Full Name"
+                      onChange={formik.handleChange}
+                      value={formik.values.signfullname}
+                    />
+                     {formik.touched.signfullname && formik.errors.signfullname ? (
+                        <div>{formik.errors.signfullname}</div>
+                      ) : null}
+                  </div>
+                  <div>
+                    <Inputbox 
+                    id="signpassword"
+                    name="signpassword"
+                    type="password" 
+                    variant="outlined" 
+                    placeholder="Enter Your Password"
+                    onChange={formik.handleChange}
+                    value={formik.values.signpassword}
+                    />
+                       {formik.touched.signpassword && formik.errors.signpassword ? (
+                        <div>{formik.errors.signpassword}</div>
+                      ) : null}
+                  </div>
 
-                {/* radio section start here */}
-                <FormControl>
-                    <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-row-radio-buttons-group-label"
-                      name="row-radio-buttons-group"
-                    >
-                      <FormControlLabel value="female" control={<Radio />} label="Female" />
-                      <FormControlLabel value="male" control={<Radio />} label="Male" />
-                      <FormControlLabel value="other" control={<Radio />} label="Other" />
-                    </RadioGroup>
-              </FormControl>
-                {/* radio section End here */}
+                    {/* radio section start here */}
+                    <FormControl>
+                        <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+                        <RadioGroup
+                          row
+                          aria-labelledby="demo-row-radio-buttons-group-label"
+                          name="row-radio-buttons-group"
+                        >
+                          <FormControlLabel value="female" control={<Radio />} label="Female" />
+                          <FormControlLabel value="male" control={<Radio />} label="Male" />
+                          <FormControlLabel value="other" control={<Radio />} label="Other" />
+                        </RadioGroup>
+                        
+                  </FormControl>
+                    {/* radio section End here */}
 
-                <BootstrapButton variant="contained" disableRipple>
-                   Sign up
-                </BootstrapButton>
+                    <BootstrapButton type='submit' variant="contained" disableRipple>
+                      Sign up
+                    </BootstrapButton>
+                </div>
+              </form>
+
                 <span className='registerin'>Already  have an account ? <NavLink to='/' className='registersignin'>Sign In</NavLink></span>
             </div>
           </Grid>
