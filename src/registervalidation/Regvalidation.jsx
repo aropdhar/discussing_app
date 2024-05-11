@@ -15,13 +15,12 @@ let registervalidate = Yup.object({
     signfullname: Yup.string()
         .max(12, 'Must be 12 characters or less')
         .min(4 , 'Minimum 4 characters')
-        .matches(signfullameregex , 'Please Match Full Name Regex')
         .required('Please Enter Your Full Name'),
 
-    signpassword: Yup.string()
-    .max(12, 'Must be 12 characters or less')
-    .min(6, 'Minimum 6 characters or less')
-    .required('Please Enter Your Password'),
+        signpassword: Yup.string()
+        .max(12, 'Must be 12 characters or less')
+        .min(6, 'Minimum 6 characters or less')
+        .required('Please Enter Your Password'),
   })
 
 

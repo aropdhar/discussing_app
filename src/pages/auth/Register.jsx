@@ -11,6 +11,8 @@ import Button from '@mui/material/Button';
 import { NavLink } from 'react-router-dom';
 import { useFormik } from 'formik';
 import registervalidate from '../../registervalidation/Regvalidation';
+import { getAuth, createUserWithEmailAndPassword , sendEmailVerification } from "firebase/auth";
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -56,6 +58,8 @@ const BootstrapButton = styled(Button)({
 
 const Register = () => {
   
+  const auth = getAuth();
+
   const initialValues = {
 
     signemail: '',
@@ -69,8 +73,27 @@ const Register = () => {
     validationSchema: registervalidate,
     
     onSubmit: (values , actions) => {
-      console.log(values);
+
       actions.resetForm();
+
+      createUserWithEmailAndPassword(auth, values.signemail, values.signpassword)
+      .then((userCredential) => {
+        
+        sendEmailVerification(auth.currentUser)
+        .then(() => {
+           console.log(userCredential);
+           console.log("verfied hoice");
+        });
+
+        
+      })
+      .catch((error) => {
+
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        
+      });
+
     },
   });
 
@@ -99,7 +122,7 @@ const Register = () => {
                     value={formik.values.signemail}
                     />
                      {formik.touched.signemail && formik.errors.signemail ? (
-                        <div>{formik.errors.signemail}</div>
+                        <div className='signuperror'>{formik.errors.signemail}</div>
                       ) : null}
                   </div>
                   
@@ -114,7 +137,7 @@ const Register = () => {
                       value={formik.values.signfullname}
                     />
                      {formik.touched.signfullname && formik.errors.signfullname ? (
-                        <div>{formik.errors.signfullname}</div>
+                        <div className='signuperror'>{formik.errors.signfullname}</div>
                       ) : null}
                   </div>
                   <div>
@@ -128,12 +151,12 @@ const Register = () => {
                     value={formik.values.signpassword}
                     />
                        {formik.touched.signpassword && formik.errors.signpassword ? (
-                        <div>{formik.errors.signpassword}</div>
+                        <div className='signuperror'>{formik.errors.signpassword}</div>
                       ) : null}
                   </div>
 
                     {/* radio section start here */}
-                    <FormControl>
+                    {/* <FormControl>
                         <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
                         <RadioGroup
                           row
@@ -145,7 +168,7 @@ const Register = () => {
                           <FormControlLabel value="other" control={<Radio />} label="Other" />
                         </RadioGroup>
                         
-                  </FormControl>
+                       </FormControl> */}
                     {/* radio section End here */}
 
                     <BootstrapButton type='submit' variant="contained" disableRipple>
