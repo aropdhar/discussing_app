@@ -11,7 +11,8 @@ import Button from '@mui/material/Button';
 import { NavLink } from 'react-router-dom';
 import { useFormik } from 'formik';
 import registervalidate from '../../registervalidation/Regvalidation';
-import { getAuth, createUserWithEmailAndPassword , sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword , sendEmailVerification ,updateProfile  } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -59,6 +60,7 @@ const BootstrapButton = styled(Button)({
 const Register = () => {
   
   const auth = getAuth();
+  const db = getDatabase();
 
   const initialValues = {
 
@@ -81,8 +83,21 @@ const Register = () => {
         
         sendEmailVerification(auth.currentUser)
         .then(() => {
-           console.log(userCredential);
-           console.log("verfied hoice");
+          updateProfile(auth.currentUser, {
+            displayName: values.signfullname, 
+            photoURL: "",
+          }).then(() => {
+
+            set(ref(db, 'users/' + userCredential.user.uid), {
+              DisplayName: userCredential.user.displayName,
+              email: userCredential.user.email,
+              profile_picture : userCredential.user.photoURL,
+            }).then(()=>{
+              console.log("User Create Successfully");
+            });
+          }).catch((error) => {
+            console.log('name e jhamela ache');
+          });
         });
 
         

@@ -16,6 +16,8 @@ import Validation from '../../validation/Validation';
 import Heading from '../../component/heading/Heading';
 import Modal from '@mui/material/Modal';
 import { IoMdClose } from "react-icons/io";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -60,6 +62,8 @@ const style = {
 };
 
 const Login = () => {
+  
+  const auth = getAuth();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -74,14 +78,24 @@ const Login = () => {
     initialValues: initialValues,
     validationSchema: Validation,
     onSubmit: (values , actions) => {
-       console.log(values);
        actions.resetForm();
+
+       signInWithEmailAndPassword(auth, values.email, values.password)
+        .then((userCredential) => {
+
+          const user = userCredential.user;
+          
+          console.log(user);
+
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
+
     },
   });
 
-  let handlecross = () =>{
-
-  }
 
   return (
     <>
