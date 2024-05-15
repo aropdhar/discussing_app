@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -13,7 +13,9 @@ import { useFormik } from 'formik';
 import registervalidate from '../../registervalidation/Regvalidation';
 import { getAuth, createUserWithEmailAndPassword , sendEmailVerification ,updateProfile  } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
-
+import { ToastContainer, toast } from 'react-toastify';
+import { Puff } from 'react-loader-spinner';
+import { useNavigate } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -61,6 +63,8 @@ const Register = () => {
   
   const auth = getAuth();
   const db = getDatabase();
+  const [loading , setloading] = useState(false);
+  const navigate = useNavigate();
 
   const initialValues = {
 
@@ -76,8 +80,8 @@ const Register = () => {
     
     onSubmit: (values , actions) => {
 
+      setloading(true)
       actions.resetForm();
-
       createUserWithEmailAndPassword(auth, values.signemail, values.signpassword)
       .then((userCredential) => {
         
@@ -94,26 +98,59 @@ const Register = () => {
               profile_picture : userCredential.user.photoURL,
             }).then(()=>{
               console.log("User Create Successfully");
+              toast("Registration Successfully....!!");
+              setloading(false);
+              setTimeout(()=>{
+                navigate("/");
+              },2000)
             });
           }).catch((error) => {
             console.log('name e jhamela ache');
+            setloading(false)
           });
         });
-
-        
       })
       .catch((error) => {
 
         const errorCode = error.code;
         const errorMessage = error.message;
-        
+        setloading(false)
       });
 
     },
   });
 
   return (
-    <div>
+    <>
+      {/* loading section start Here */}
+      {loading &&
+        <div className='loading_wrapper'>
+          <Puff
+              visible={true}
+              height="120"
+              width="120"
+              color="#fff"
+              ariaLabel="puff-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+          />
+        </div>
+      }
+      {/* loading section end Here */}
+      {/* toastify section start Here */}
+      <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+      />
+      {/* toastify section End Here */}
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={0}>
           <Grid item xs={6} style={{display: 'flex' , alignItems:'center' , justifyContent: 'center'}}>
@@ -202,7 +239,7 @@ const Register = () => {
           </Grid>
         </Grid>
       </Box>
-    </div>
+    </>
   )
 }
 

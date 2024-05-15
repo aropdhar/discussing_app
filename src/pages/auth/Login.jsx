@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './auth.css'
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -16,9 +16,10 @@ import Validation from '../../validation/Validation';
 import Heading from '../../component/heading/Heading';
 import Modal from '@mui/material/Modal';
 import { IoMdClose } from "react-icons/io";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
-
+import { getAuth, signInWithEmailAndPassword,sendPasswordResetEmail ,GoogleAuthProvider ,signInWithPopup } from "firebase/auth";
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { ThreeDots } from 'react-loader-spinner';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -69,100 +70,176 @@ const Login = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   
+  const navigate = useNavigate();
+  const [loader , setLoader] = useState(false)
+  const [forgetpass , setForgetpass] = useState("")
+  const provider = new GoogleAuthProvider();
+
   let initialValues = {
     email: '',
-    password: ''
+    password: '',
+    forgotemail: ''
   }
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: Validation,
     onSubmit: (values , actions) => {
-       actions.resetForm();
+       
+      setLoader(true)
 
        signInWithEmailAndPassword(auth, values.email, values.password)
         .then((userCredential) => {
 
           const user = userCredential.user;
           
-          console.log(user);
+            if(user.emailVerified){
+              navigate("/home");
+              actions.resetForm();
+            }
+            else{
+              toast("Please Verified Your Email!!!");
+              setLoader(false)           
+            }
 
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
+          setTimeout(()=>{
+            setLoader(false)
+          })
+          toast("Invalid Credential!!!");          
         });
 
     },
   });
+ 
 
+  let handleresetbtn = () =>{
+    setOpen(false)
+    sendPasswordResetEmail(auth, forgetpass)
+    .then(() => {
+      toast("Password Reset Kora hoiche");
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+  }
+  
+  let handlegoogle = () =>{
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-
-          <Grid container spacing={0}>
-            <Grid item xs={6} style={{display: "flex" , alignItems: "center" , justifyContent: "center"}}>
+    {/* toastify section start Here */}
+    <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+    />
+    {/* toastify section end Here */}
+  <Box sx={{ flexGrow: 1 }}>
+    <Grid container spacing={0}>
+      <Grid item xs={6} style={{display: "flex" , alignItems: "center" , justifyContent: "center"}}>
+        <div>
+            <Loginhead variant="h4">
+                Login to your account!
+            </Loginhead>
+            <Image onClick={handlegoogle} source={googleimg} alt="Not Found" styledimg="googleimg"/>
+          <form onSubmit={formik.handleSubmit}>
+            <div className='login_main'>
               <div>
-                  <Loginhead variant="h4">
-                      Login to your account!
-                  </Loginhead>
-                  <Image source={googleimg} alt="Not Found" styledimg="googleimg"/>
-                <form onSubmit={formik.handleSubmit}>
-                  <div className='login_main'>
-                    <div>
-                      <Inputbox 
-                       type="email" 
-                       id="email"
-                       name="email"
-                       variant="standard" 
-                       placeholder="Email Address"
-                       onChange={formik.handleChange}
-                       value={formik.values.email}
-                       />
-                          {formik.touched.email && formik.errors.email ? (
-                            <div className='fromikerror'>{formik.errors.email}</div>
-                          ) : null}
-                    </div>
-                    <div>
-
-                      <Inputbox 
-                       type='password'
-                       id='password'
-                       name="password"
-                       variant="standard"
-                       placeholder="Enter Password"
-                       onChange={formik.handleChange}
-                       value={formik.values.password}
-                       />
-                      
-                      {formik.touched.password && formik.errors.password ? (
-                            <div className='fromikerror'>{formik.errors.password}</div>
-                      ) : null}
-                    </div>
-
-
-                      <BootstrapButton type='submit' variant="contained" disableRipple>
-                        Login to Continue
-                      </BootstrapButton>
-                      
-                    <a className='modal' onClick={handleOpen}>Forgot Password??</a>
-                  </div>
-                </form>
-
-                   
-                  <span style={{fontSize: "13.34px" , color: '#03014C' , fontweight:"700",lineHeight: "18.16px" }}>Don’t have an account ? <NavLink to='/registration' style={{fontSize: "13.34px" , color: 'red' , fontweight:"700", lineHeight: "18.16px" }}>Sign up</NavLink></span>
+                <Inputbox 
+                  type="email" 
+                  id="email"
+                  name="email"
+                  variant="standard" 
+                  placeholder="Email Address"
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                  />
+                    {formik.touched.email && formik.errors.email ? (
+                      <div className='fromikerror'>{formik.errors.email}</div>
+                    ) : null}
               </div>
-            </Grid>
+              <div>
 
-
-            <Grid item xs={6}>
-              <div style={{width: "100%" , height: "100vh" }}>
-                <Image source={loginbg} alt="Not Found" styledimg="loginimg"/>
+                <Inputbox 
+                  type='password'
+                  id='password'
+                  name="password"
+                  variant="standard"
+                  placeholder="Enter Password"
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                  />
+                
+                {formik.touched.password && formik.errors.password ? (
+                      <div className='fromikerror'>{formik.errors.password}</div>
+                ) : null}
               </div>
-            </Grid>
-          </Grid>
-      </Box>      
+
+
+                <BootstrapButton disabled={loader} type='submit' variant="contained" disableRipple>
+                  {loader? 
+                    <ThreeDots
+                      visible={true}
+                      height="40"
+                      width="80"
+                      color="#4fa94d"
+                      radius="9"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                      />
+                    :
+                     "Login to Continue"
+                  }
+                </BootstrapButton>
+                
+              <a className='modal' onClick={handleOpen}>Forgot Password??</a>
+            </div>
+          </form>
+
+              
+            <span style={{fontSize: "13.34px" , color: '#03014C' , fontweight:"700",lineHeight: "18.16px" }}>Don’t have an account ? <NavLink to='/registration' style={{fontSize: "13.34px" , color: 'red' , fontweight:"700", lineHeight: "18.16px" }}>Sign up</NavLink></span>
+        </div>
+      </Grid>
+
+
+      <Grid item xs={6}>
+        <div style={{width: "100%" , height: "100vh" }}>
+          <Image source={loginbg} alt="Not Found" styledimg="loginimg"/>
+        </div>
+      </Grid>
+    </Grid>
+  </Box>      
 
       <Modal
         open={open}
@@ -175,14 +252,15 @@ const Login = () => {
            <h1 style={{textAlign: 'center' , marginBottom: '20px'}}>Forgot Your Password</h1>
 
           <Inputbox 
-          type="password" 
-          id="forgotpassword"
-          name="forgotpassword"
-          variant="outlined" 
-          placeholder="Enter Your New Password" 
-          className='forgotinput'/>
+            type="email" 
+            id="forgotemail"
+            name="forgotemail"
+            variant="outlined" 
+            placeholder="Enter Your Email Address"
+            onChange={(e)=>setForgetpass(e.target.value)}
+          />
           <div style={{marginTop: '30px' , textAlign: 'center'}}>
-            <BootstrapButton type='submit' variant="contained" disableRipple>
+            <BootstrapButton onClick={handleresetbtn} type='submit' variant="contained" disableRipple>
               Reset Password
             </BootstrapButton>
           </div>

@@ -7,9 +7,9 @@ let signemailregex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"
 let registervalidate = Yup.object({
     
     signemail: Yup.string()
-    .email('Invalid email address')
-    .matches(signemailregex , 'please match Email Regex')
-    .required('Please Enter Your Email Address'),
+        .email('Invalid email address')
+        .matches(signemailregex , 'please match Email Regex example@gmail.com')
+        .required('Please Enter Your Email Address'),
 
     signfullname: Yup.string()
         .max(12, 'Must be 12 characters or less')
@@ -17,9 +17,9 @@ let registervalidate = Yup.object({
         .required('Please Enter Your Full Name'),
 
     signpassword: Yup.string()
-    .max(12, 'Must be 12 characters or less')
-    .min(6, 'Minimum 6 characters or less')
-    .required('Please Enter Your Password'),
+        .max(12, 'Must be 12 characters or less')
+        .min(6, 'Minimum 6 characters or less')
+        .required('Please Enter Your Password'),
   })
 
 

@@ -12,6 +12,7 @@ const Validation = Yup.object({
           .email('Invalid Email Address')
           .matches(emailregex , "Please Matches in regex")
           .required('Please Enter Your Email'),
+
   })
 
 export default Validation

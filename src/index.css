@@ -6,3 +6,16 @@
     list-style: none;
 }
 
+.loading_wrapper{
+
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.648);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
