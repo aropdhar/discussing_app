@@ -97,7 +97,6 @@ const Register = () => {
               email: userCredential.user.email,
               profile_picture : userCredential.user.photoURL,
             }).then(()=>{
-              console.log("User Create Successfully");
               toast("Registration Successfully....!!");
               setloading(false);
               setTimeout(()=>{

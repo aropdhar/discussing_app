@@ -13,6 +13,7 @@ import Register from "./pages/auth/Register";
 import Message from "./pages/message/Message";
 import Notification from "./pages/notification/Notification";
 import Settings from "./pages/setting/Settings";
+import Isloginprivate from "./privateroute/Isloginprivate";
 
 
 function App() {
@@ -20,12 +21,14 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
+        <Route element={<Isloginprivate/>}>
           <Route element={<Rootlayout/>}>
             <Route path='/home' element={<Home/>}/>
             <Route path='/message' element={<Message/>}/>
             <Route path='/notification' element={<Notification/>}/>
             <Route path='/setting' element={<Settings/>}/>
           </Route>
+        </Route>
             <Route path='*' element={<Error/>}/>
             <Route path='/' element={<Login/>}/>
             <Route path='/registration' element={<Register/>}/>

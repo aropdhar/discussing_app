@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import { TextField, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import googleimg from '../../assets/google.webp'
 import Image from '../../component/layout/utilities/Image';
@@ -20,6 +20,8 @@ import { getAuth, signInWithEmailAndPassword,sendPasswordResetEmail ,GoogleAuthP
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from 'react-loader-spinner';
+import { useSelector, useDispatch } from 'react-redux'
+import { loginstore } from '../../authslice/authSlice';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -74,6 +76,7 @@ const Login = () => {
   const [loader , setLoader] = useState(false)
   const [forgetpass , setForgetpass] = useState("")
   const provider = new GoogleAuthProvider();
+  const dispatch = useDispatch()
 
   let initialValues = {
     email: '',
@@ -94,20 +97,27 @@ const Login = () => {
           const user = userCredential.user;
           
             if(user.emailVerified){
+              localStorage.setItem("logedinstore", JSON.stringify(user));
+              dispatch(loginstore(user))
               navigate("/home");
               actions.resetForm();
+              setLoader(false)
             }
             else{
               toast("Please Verified Your Email!!!");
-              setLoader(false)           
+              signOut(auth).then(() => {
+          
+              }).catch((error) => {
+                // An error happened.
+              });          
             }
 
         })
         .catch((error) => {
           setTimeout(()=>{
             setLoader(false)
-          })
-          toast("Invalid Credential!!!");          
+          },2000)
+          toast("Invalid Credential!!!");    
         });
 
     },
@@ -129,13 +139,22 @@ const Login = () => {
   let handlegoogle = () =>{
     signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
+        console.log(result);
         const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+        if(user.emailVerified){
+          localStorage.setItem("logedinstore", JSON.stringify(user));
+          dispatch(loginstore(user))
+          navigate("/home");
+          setLoader(false)
+        }
+        else{
+          toast("Please Verified Your Email!!!");
+          signOut(auth).then(() => {
+      
+          }).catch((error) => {
+            // An error happened.
+          });          
+        }
       }).catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
