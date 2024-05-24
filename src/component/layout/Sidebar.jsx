@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { loginstore } from '../../authslice/authSlice';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import Heading from '../heading/Heading';
 
 
 const Sidebar = () => {
@@ -21,7 +22,7 @@ const Sidebar = () => {
   const auth = getAuth();
 
   const data = useSelector((state) => state?.logedindatauser?.value)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   console.log(data);
 
   let handlesignout = () =>{
@@ -29,7 +30,7 @@ const Sidebar = () => {
 
       navigate("/");
       localStorage.removeItem("logedinstore");
-      dispatch(loginstore(null)) 
+      dispatch(loginstore(null)); 
 
     }).catch((error) => {
       // An error happened.
@@ -66,8 +67,9 @@ const Sidebar = () => {
                   <li><NavLink to='/setting'><CiSettings /></NavLink></li>
                 </ul>
               </div>
-              <div onClick={handlesignout} className='sidebar_logout'>
-                <IoIosLogOut />               
+              <div onClick={handlesignout}>
+                <p className='sidebar_logout'><IoIosLogOut />Log Out</p>
+                              
               </div>
           
         </div>

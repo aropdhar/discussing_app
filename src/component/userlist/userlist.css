@@ -13,17 +13,48 @@
 .item_main{
     display: flex;
     flex-direction: column;
-    row-gap: 20px;
     margin-top: 20px;
 }
 
-.item{
+.useritem{
 
-    background: red;
     width: 100%;
-    height: 40px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.useritem .userimg{
+    width: 60px;
+    height: 60px;
+    background-color: aqua;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.useritem .userimg img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.userinfo{
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
 }
 
+.addbtn{
+    background: blue;
+    padding: 8px 14px;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
 
 

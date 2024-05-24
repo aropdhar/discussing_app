@@ -22,6 +22,8 @@ import { useNavigate } from "react-router-dom";
 import { ThreeDots } from 'react-loader-spinner';
 import { useSelector, useDispatch } from 'react-redux'
 import { loginstore } from '../../authslice/authSlice';
+import { getDatabase, ref, set } from "firebase/database";
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -73,10 +75,11 @@ const Login = () => {
   const handleClose = () => setOpen(false);
   
   const navigate = useNavigate();
-  const [loader , setLoader] = useState(false)
-  const [forgetpass , setForgetpass] = useState("")
+  const [loader , setLoader] = useState(false);
+  const [forgetpass , setForgetpass] = useState("");
   const provider = new GoogleAuthProvider();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const db = getDatabase();
 
   let initialValues = {
     email: '',
@@ -98,10 +101,10 @@ const Login = () => {
           
             if(user.emailVerified){
               localStorage.setItem("logedinstore", JSON.stringify(user));
-              dispatch(loginstore(user))
+              dispatch(loginstore(user));
               navigate("/home");
               actions.resetForm();
-              setLoader(false)
+              setLoader(false);
             }
             else{
               toast("Please Verified Your Email!!!");
@@ -128,7 +131,7 @@ const Login = () => {
     setOpen(false)
     sendPasswordResetEmail(auth, forgetpass)
     .then(() => {
-      toast("Password Reset Kora hoiche");
+      toast("Your Password Reset & Email Check");
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -139,13 +142,21 @@ const Login = () => {
   let handlegoogle = () =>{
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log(result);
         const user = result.user;
         if(user.emailVerified){
           localStorage.setItem("logedinstore", JSON.stringify(user));
           dispatch(loginstore(user))
           navigate("/home");
-          setLoader(false)
+          setLoader(false);
+          
+          set(ref(db, 'users/' + user.uid), {
+            DisplayName: user.displayName,
+            Email: user.email,
+            profileUrl: user.photoURL
+          }).then(()=>{          
+            toast("Login With Google Data Create");
+          });
+
         }
         else{
           toast("Please Verified Your Email!!!");
@@ -226,7 +237,7 @@ const Login = () => {
 
 
                 <BootstrapButton disabled={loader} type='submit' variant="contained" disableRipple>
-                  {loader? 
+                  {loader ? 
                     <ThreeDots
                       visible={true}
                       height="40"
