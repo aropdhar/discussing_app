@@ -114,7 +114,6 @@ const Login = () => {
                 // An error happened.
               });          
             }
-
         })
         .catch((error) => {
           setTimeout(()=>{

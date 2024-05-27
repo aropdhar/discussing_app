@@ -26,6 +26,7 @@ const Sidebar = () => {
   console.log(data);
 
   let handlesignout = () =>{
+    
     signOut(auth).then(() => {
 
       navigate("/");
