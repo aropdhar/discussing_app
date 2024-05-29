@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import Heading from '../../component/heading/Heading'
 import { getDatabase, ref, onValue , push, set, remove } from "firebase/database";
 import { useSelector, useDispatch } from 'react-redux'
+import { Alert } from '@mui/material';
 
 const FriendRequest = () => {
 
   const db = getDatabase();
   const data = useSelector((state) => state.logedindatauser.value)
   const [friendreq , setFriendreq] = useState([])
-  
+
   useEffect(()=>{
     const freqRef = ref(db, 'friendRequest');
      onValue(freqRef, (snapshot) => {
@@ -37,6 +38,24 @@ const FriendRequest = () => {
 
   let handleconfirm = (confirminfo) =>{
       console.log(confirminfo);
+
+      set(push(ref(db, 'friends')), {
+
+        senderid: confirminfo.whosendid,
+        senderemail: confirminfo.whosendemail,
+        sendername: confirminfo.whosendname,
+        receiveid: data.uid,
+        receivename: data.displayName,
+        receiveemail: data.email,
+
+      }).then(()=>{
+        remove(ref(db, 'friendRequest/' + confirminfo.id)).then(()=>{
+      
+          console.log("Friend Request Confirm Successfully");
+    
+        });
+      });
+
   }
 
   return (
@@ -44,7 +63,9 @@ const FriendRequest = () => {
       <div className='userlist_main'>
          <Heading text="Friend Request"/>
          <div className='item_main'>
-          {friendreq.map((item , index)=>(
+          {friendreq.length > 0 
+          ?
+          friendreq.map((item , index)=>(
             <div key={index} className='useritem'>
                 <div className="userimg">
                   
@@ -61,7 +82,8 @@ const FriendRequest = () => {
                 </div>
             </div>
           ))
-
+          :
+            <Alert severity="info">No Request Found</Alert>
           }
          </div>
       </div>

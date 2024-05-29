@@ -1,20 +1,55 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Heading from '../heading/Heading'
+import { getDatabase, ref, onValue , push, set } from "firebase/database";
+import { useSelector, useDispatch } from 'react-redux'
+import { Alert } from '@mui/material';
 
 const Friends = () => {
+  
+  const db = getDatabase();
+  const [friendlist , setFriendList] = useState([])
+  const data = useSelector((state) => state.logedindatauser.value)
+
+   useEffect(()=>{
+    const friendRef = ref(db, 'friends');
+    onValue(friendRef, (snapshot) => {
+     
+     let arr = [];
+
+     snapshot.forEach((item)=>{
+
+       if(item.val().senderid == data.uid || item.val().receiveid == data.uid){   
+         arr.push({...item.val() , id: item.key});
+      }
+     });
+     
+     setFriendList(arr);
+   });
+   },[])
+
   return (
     <>
        <div className='userlist_main'>
          <Heading text="Friends"/>
          <div className='item_main'>
-          {[0,1].map((item , index)=>(
+          {friendlist.length > 0 
+          ?
+          friendlist.map((item , index)=>(
             <div key={index} className='useritem'>
                 <div className="userimg">
                   
                 </div>
                 <div className="userinfo">
                     <div>
-                      <h4>Arop dhar</h4>
+                      <h4>{item.receiveid == data.uid
+                      ?
+                      item.sendername
+
+                      :
+
+                      item.receivename
+
+                      }</h4>
                       <p>Mern 2306</p>
                     </div>
                     <div style={{display: "flex" , alignItems: "center" , gap: "10px"}}>
@@ -23,7 +58,8 @@ const Friends = () => {
                 </div>
             </div>
           ))
-
+           :
+           <Alert severity="info">No Friends List Found</Alert>
           }
          </div>
       </div>

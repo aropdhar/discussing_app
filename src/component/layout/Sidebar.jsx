@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { loginstore } from '../../authslice/authSlice';
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import Heading from '../heading/Heading';
+
 
 
 const Sidebar = () => {
@@ -23,7 +23,7 @@ const Sidebar = () => {
 
   const data = useSelector((state) => state?.logedindatauser?.value)
   const dispatch = useDispatch();
-  console.log(data);
+  
 
   let handlesignout = () =>{
     
@@ -69,8 +69,7 @@ const Sidebar = () => {
                 </ul>
               </div>
               <div onClick={handlesignout}>
-                <p className='sidebar_logout'><IoIosLogOut />Log Out</p>
-                              
+                <p className='sidebar_logout'><IoIosLogOut />Log Out</p>                            
               </div>
           
         </div>
