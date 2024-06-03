@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Heading from '../heading/Heading'
-import { getDatabase, ref, onValue , push, set } from "firebase/database";
+import { getDatabase, ref, onValue , push, set, remove } from "firebase/database";
 import { useSelector, useDispatch } from 'react-redux'
 import { Alert } from '@mui/material';
 
@@ -9,6 +9,7 @@ const Friends = () => {
   const db = getDatabase();
   const [friendlist , setFriendList] = useState([])
   const data = useSelector((state) => state.logedindatauser.value)
+  
 
    useEffect(()=>{
     const friendRef = ref(db, 'friends');
@@ -18,14 +19,33 @@ const Friends = () => {
 
      snapshot.forEach((item)=>{
 
-       if(item.val().senderid == data.uid || item.val().receiveid == data.uid){   
+       if(item.val().senderid == data.uid || item.val().receiveid == data.uid){ 
          arr.push({...item.val() , id: item.key});
       }
-     });
+    });
      
      setFriendList(arr);
    });
    },[])
+
+   let handleblock = (blockinfo) =>{
+
+     set(push(ref(db, 'blocklist')), {
+      blockkorcheid: data.uid,
+      blockkorcheemail: data.email,
+      blockkorchename: data.displayName,
+      blockkhaiceid: blockinfo.senderid,
+      blockkhaiceemail: blockinfo.senderemail,
+      blockkhaicename: blockinfo.sendername,
+   }).then(()=>{
+    remove(ref(db, 'friends/' + blockinfo.id)).then(()=>{
+      
+      console.log("ok");
+
+    });
+   });
+
+   }
 
   return (
     <>
@@ -53,7 +73,7 @@ const Friends = () => {
                       <p>Mern 2306</p>
                     </div>
                     <div style={{display: "flex" , alignItems: "center" , gap: "10px"}}>
-                        <button className='addbtn'>Block</button>
+                        <button onClick={()=>handleblock(item)} className='addbtn'>Block</button>
                     </div>
                 </div>
             </div>

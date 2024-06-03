@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './userlist.css'
 import Heading from '../heading/Heading'
-import { getDatabase, ref, onValue , push, set } from "firebase/database";
+import { getDatabase, ref, onValue , push, set, remove } from "firebase/database";
 import { useSelector, useDispatch } from 'react-redux'
 import { Alert } from '@mui/material';
 import { NavLink } from 'react-router-dom';
@@ -70,6 +70,13 @@ const Userlist = () => {
   },[])
 
 
+ let handleCancel = (cancelinfo) =>{
+
+  remove(ref(db, 'friendRequest/' + cancelinfo.id)).then(()=>{
+    console.log("OK");
+  })
+
+ }
 
 
 
@@ -116,7 +123,7 @@ return (
 
                       ?
                       
-                        <button className='addbtn'>Cancel</button>
+                        <button onClick={()=>handleCancel(item)} className='addbtn'>Cancel</button>
                       
                       :
                       
