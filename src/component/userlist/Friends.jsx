@@ -73,7 +73,9 @@ const Friends = () => {
                       <p>Mern 2306</p>
                     </div>
                     <div style={{display: "flex" , alignItems: "center" , gap: "10px"}}>
+                        <button className='addbtn'>Unfriend</button>
                         <button onClick={()=>handleblock(item)} className='addbtn'>Block</button>
+
                     </div>
                 </div>
             </div>
