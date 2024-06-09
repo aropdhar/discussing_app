@@ -23,7 +23,6 @@ const Sidebar = () => {
 
   const data = useSelector((state) => state?.logedindatauser?.value)
   const dispatch = useDispatch();
-  
 
   let handlesignout = () =>{
     
@@ -45,7 +44,7 @@ const Sidebar = () => {
         <div className='sidebar_card'>
               <div>
                   <Avatar
-                      alt="Remy Sharp"
+                      alt={data.displayName}
                       src="/static/images/avatar/1.jpg"
                       sx={{ width: 100, height: 100 }}
                   />
