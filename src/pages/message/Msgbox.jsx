@@ -129,16 +129,16 @@ const Msgbox = () => {
 
                     }
 
-                        <div style={{position: "absolute" , left: "20px" , bottom: "20px"}}>
-                        <EmojiPicker onEmojiClick={handleemoji} open={emojishow}/>
-                        </div>
-
-                    
-                 
+                        
                 </div>
                 <div className="footer_section">
-                      <MdEmojiEmotions onClick={()=>setEmojishow(!emojishow)} className='footer_Emoji'/>
                       
+                      
+                      <div style={{position: "absolute" , left: "20px" , bottom: "60px"}}>
+                        <EmojiPicker onEmojiClick={handleemoji} open={emojishow}/>
+                        </div>
+                        
+                        
                        <input onKeyUp={handleEnterpress} value={msgvalue} onChange={(e)=>setMsgvalue(e.target.value)} type="text" placeholder='Enter Your Message'/>
                        {msgvalue.length > 0 &&
 

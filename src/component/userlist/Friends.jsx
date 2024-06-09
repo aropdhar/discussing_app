@@ -47,6 +47,12 @@ const Friends = () => {
 
    }
 
+   let handleunfriend = (unfriendinfo) =>{
+
+    remove(ref(db, 'friends/' + unfriendinfo.id))
+      
+   }
+
   return (
     <>
        <div className='userlist_main'>
@@ -73,7 +79,7 @@ const Friends = () => {
                       <p>Mern 2306</p>
                     </div>
                     <div style={{display: "flex" , alignItems: "center" , gap: "10px"}}>
-                        <button className='addbtn'>Unfriend</button>
+                        <button onClick={()=>handleunfriend(item)} className='addbtn'>Unfriend</button>
                         <button onClick={()=>handleblock(item)} className='addbtn'>Block</button>
 
                     </div>
