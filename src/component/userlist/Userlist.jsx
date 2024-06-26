@@ -71,11 +71,12 @@ const Userlist = () => {
 
 
  let handleCancel = (cancelinfo) =>{
+  
 
-  remove(ref(db, 'friendRequest/' + cancelinfo.id)).then(()=>{
-    console.log("OK");
-  })
-
+      // remove(ref(db, 'friendRequest/' + cancelinfo.id)).then(()=>{
+      //   console.log("OK");
+      // })
+  
  }
 
 

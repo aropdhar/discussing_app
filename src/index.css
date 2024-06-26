@@ -157,3 +157,12 @@
 .receivemsg_main .date , .sendmsg_main .date{
     font-size: 12px;
 }
+
+.sendaudio{
+    border-radius: 10px;
+}
+
+.receiveaudio{
+    border-radius: 10px; 
+}
+
