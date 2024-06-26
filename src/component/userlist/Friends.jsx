@@ -38,6 +38,7 @@ const Friends = () => {
       blockkhaiceemail: blockinfo.senderemail,
       blockkhaicename: blockinfo.sendername,
    }).then(()=>{
+    
     remove(ref(db, 'friends/' + blockinfo.id)).then(()=>{
       
       console.log("ok");

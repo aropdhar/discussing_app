@@ -52,6 +52,7 @@ const Msgfriend = () => {
                 <div className="userinfo">
                     <div>
                       <h4>{item.receiveid == data.uid
+                      
                       ?
                       item.sendername
 

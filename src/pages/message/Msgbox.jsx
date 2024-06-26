@@ -5,7 +5,15 @@ import { getDatabase, ref, onValue , push, set, remove } from "firebase/database
 import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment/moment';
 import EmojiPicker from 'emoji-picker-react';
+import ScrollToBottom from 'react-scroll-to-bottom';
+import { AudioRecorder } from 'react-audio-voice-recorder';
 
+const addAudioElement = (blob) => {
+  const url = URL.createObjectURL(blob);
+  const audio = document.createElement("audio");
+  audio.src = url;
+  audio.controls = true;
+};
 
 const Msgbox = () => {
     
@@ -98,6 +106,7 @@ const Msgbox = () => {
                         {activeuserdata.receiveid == data.uid 
 
                         ?
+                        
                         activeuserdata.sendername
 
                         :
@@ -107,7 +116,7 @@ const Msgbox = () => {
                         <p>Active Now</p>
                     </div>
                 </div>
-                <div className="msg_body">
+                <ScrollToBottom className="msg_body">
                     {allmsg.map((item , index)=>(
                         item.senderid == data.uid ? 
 
@@ -130,15 +139,24 @@ const Msgbox = () => {
                     }
 
                         
-                </div>
+                </ScrollToBottom>
                 <div className="footer_section">
-                      
+                      <MdEmojiEmotions onClick={()=>setEmojishow(!emojishow)} className='footer_Emoji'/>
                       
                       <div style={{position: "absolute" , left: "20px" , bottom: "60px"}}>
                         <EmojiPicker onEmojiClick={handleemoji} open={emojishow}/>
-                        </div>
-                        
-                        
+                      </div>
+                      
+                      <AudioRecorder 
+                        onRecordingComplete={addAudioElement}
+                        audioTrackConstraints={{
+                          noiseSuppression: true,
+                          echoCancellation: true,
+                        }} 
+                        downloadOnSavePress={true}
+                        downloadFileExtension="webm"
+                      />
+
                        <input onKeyUp={handleEnterpress} value={msgvalue} onChange={(e)=>setMsgvalue(e.target.value)} type="text" placeholder='Enter Your Message'/>
                        {msgvalue.length > 0 &&
 
